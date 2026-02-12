@@ -1,5 +1,12 @@
-import { HomeScreen } from "@/screens/HomeScreen/HomeScreen";
+import { QuizNavigator } from "@/router/QuizNavigator";
+import { NavigationContainer } from "@react-navigation/native";
+import { StatusBar } from "expo-status-bar";
 
 export default function App() {
-  return <HomeScreen />;
+  return (
+    <NavigationContainer>
+      <StatusBar style="auto" />
+      <QuizNavigator />
+    </NavigationContainer>
+  );
 }

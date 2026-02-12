@@ -1,14 +1,25 @@
-import { StatusBar } from "expo-status-bar";
-import { Container, Warn } from "./layouts";
-import { Image } from "react-native";
-import favicon from "@assets/favicon.png";
+import { SCREENS, TQuizNavigatorStackParamList } from "@/router/types";
+import { Container } from "./layouts";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Button } from "react-native";
 
-export const HomeScreen = () => {
+export const HomeScreen = ({
+  navigation,
+}: NativeStackScreenProps<TQuizNavigatorStackParamList, SCREENS.Home>) => {
   return (
     <Container>
-      <Warn>Open up App.tsx to start working on your app!</Warn>
-      <Image source={favicon} />
-      <StatusBar style="auto" />
+      <Button
+        title="continue"
+        onPress={() => navigation.navigate(SCREENS.Game)}
+      />
+      <Button
+        title="new game"
+        onPress={() => navigation.navigate(SCREENS.Difficulty)}
+      />
+      <Button
+        title="about"
+        onPress={() => navigation.navigate(SCREENS.About)}
+      />
     </Container>
   );
 };
