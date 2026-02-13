@@ -2,6 +2,7 @@ import { SCREENS, TQuizNavigatorStackParamList } from "@/router/types";
 import { Container } from "./layouts";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Button } from "react-native";
+import { WizardAnimation } from "@/components/WizardAnimation/WizardAnimation";
 
 export const HomeScreen = ({
   navigation,
@@ -20,6 +21,7 @@ export const HomeScreen = ({
         title="about"
         onPress={() => navigation.navigate(SCREENS.About)}
       />
+      <WizardAnimation />
     </Container>
   );
 };
