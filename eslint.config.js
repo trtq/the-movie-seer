@@ -8,6 +8,9 @@ module.exports = defineConfig([
   eslintPluginPrettierRecommended,
   {
     ignores: ["dist/*"],
+    env: {
+      jest: true,
+    },
     rules: {
       "import/no-named-as-default": 0,
     },
