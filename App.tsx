@@ -1,12 +1,13 @@
+import { ThemeWrapper } from "@/components/ThemeWrapper/ThemeWrapper";
 import { QuizNavigator } from "@/router/QuizNavigator";
 import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
 
 export default function App() {
   return (
     <NavigationContainer>
-      <StatusBar style="auto" />
-      <QuizNavigator />
+      <ThemeWrapper>
+          <QuizNavigator />
+      </ThemeWrapper>
     </NavigationContainer>
   );
 }
