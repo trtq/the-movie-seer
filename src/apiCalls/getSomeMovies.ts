@@ -1,6 +1,7 @@
 import axios from "axios";
 import { TMovie } from "./types";
 
+// this just gets some rather random movies for the wizard - it's the most popular movies from one random year
 export const getSomeMovies = async (): Promise<TMovie[]> => {
   const apiUrl = process.env.EXPO_PUBLIC_TMDB_API_URL;
   const apiKey = process.env.EXPO_PUBLIC_TMDB_READ_KEY;

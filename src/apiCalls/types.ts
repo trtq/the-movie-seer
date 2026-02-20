@@ -14,3 +14,15 @@ export type TMovie = {
   vote_average: number;
   vote_count: number;
 };
+
+export type TAnswer = {
+  id: number;
+  name: string;
+  correct: boolean;
+};
+
+export type TQuestion = {
+  id: number;
+  picture: string;
+  answers: TAnswer[];
+};
