@@ -16,7 +16,6 @@ describe("WizardAnimation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (getSomeMovies as jest.Mock).mockResolvedValue(mockMovies);
-    process.env.EXPO_PUBLIC_TMDB_SMALL_IMAGE_URL = "https://";
   });
 
   test("fetches movies on mount", async () => {
@@ -32,22 +31,26 @@ describe("WizardAnimation", () => {
     // Wait for movies to load and first render to settle
     await waitFor(() => {
       const movie = getByTestId("movie-pic");
-      expect(movie.props.source[0].uri).toBe("https://movie1.jpg");
+      expect(movie.props.source[0].uri).toBe(
+        process.env.EXPO_PUBLIC_TMDB_SMALL_IMAGE_URL + "movie1.jpg",
+      );
     });
 
     // static
     await act(async () => {
-      jest.advanceTimersByTime(1300);
+      jest.advanceTimersByTime(4000);
     });
     let movie = getByTestId("movie-pic");
     expect(movie.props.source[0]).toBe(staticGif);
 
     // movie 2
     await act(async () => {
-      jest.advanceTimersByTime(1300);
+      jest.advanceTimersByTime(4000);
     });
     movie = getByTestId("movie-pic");
-    expect(movie.props.source[0].uri).toBe("https://movie2.jpg");
+    expect(movie.props.source[0].uri).toBe(
+      process.env.EXPO_PUBLIC_TMDB_SMALL_IMAGE_URL + "movie2.jpg",
+    );
   });
 
   test("shows static when API fails", async () => {

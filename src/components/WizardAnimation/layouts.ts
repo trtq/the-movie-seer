@@ -1,13 +1,13 @@
 import wizardPicture from "@assets/wizard.webp";
 import tvPicture from "@assets/wizardtv.webp";
-import { s } from "react-native-size-matters";
+import { vs } from "react-native-size-matters";
 import { Image } from "expo-image";
 import styled from "styled-components/native";
 import Animated from "react-native-reanimated";
 
 export const WizardContainer = styled.View`
-  width: ${s(320)}px;
-  height: ${s(320)}px;
+  width: ${vs(320)}px;
+  height: ${vs(320)}px;
 `;
 
 export const Wizard = styled(Animated.Image).attrs({
@@ -30,25 +30,26 @@ export const WizardTV = styled(Image).attrs({
   right: 0%;
   bottom: -5%;
   position: absolute;
+  transform: rotate(-3deg);
 `;
 
 export const Movie = styled(Image).attrs({
   contentFit: "cover",
   transition: 170,
 })`
-  width: ${s(177)}px;
-  height: ${s(101)}px;
+  width: 55%;
+  height: 32%;
   position: absolute;
-  bottom: ${s(36)}px;
-  right: ${s(6)}px;
+  bottom: 11%;
+  right: 2%;
+  transform: rotate(-3deg);
 `;
 
 export const MovieTint = styled.View`
-  width: ${s(177)}px;
-  height: ${s(101)}px;
+  width: 55%;
+  height: 32%;
   position: absolute;
-  background-color: black;
-  bottom: ${s(36)}px;
-  right: ${s(6)}px;
-  opacity: 0.2;
+  bottom: 11%;
+  right: 2%;
+  transform: rotate(-3deg);
 `;

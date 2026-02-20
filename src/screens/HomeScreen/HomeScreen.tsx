@@ -1,27 +1,42 @@
 import { SCREENS, TQuizNavigatorStackParamList } from "@/router/types";
-import { Container } from "./layouts";
+import {
+  Logo,
+  Wizard,
+  ButtonsBlock,
+  ButtonContainer,
+  ButtonText,
+  BottomElements,
+  ThemeButton,
+  ThemeIcon,
+} from "./layouts";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Button } from "react-native";
-import { WizardAnimation } from "@/components/WizardAnimation/WizardAnimation";
+import { use } from "react";
+import { ThemeContext } from "@/components/ThemeWrapper/ThemeWrapper";
+import { SafeContainer } from "@/components/SafeContainer/SafeContainer";
 
 export const HomeScreen = ({
   navigation,
 }: NativeStackScreenProps<TQuizNavigatorStackParamList, SCREENS.Home>) => {
+  const switchTheme = use(ThemeContext);
   return (
-    <Container>
-      <Button
-        title="continue"
-        onPress={() => navigation.navigate(SCREENS.Game)}
-      />
-      <Button
-        title="new game"
-        onPress={() => navigation.navigate(SCREENS.Difficulty)}
-      />
-      <Button
-        title="about"
-        onPress={() => navigation.navigate(SCREENS.About)}
-      />
-      <WizardAnimation />
-    </Container>
+    <SafeContainer>
+      <Logo testID="logo" />
+      <ButtonsBlock>
+        <ButtonContainer
+          onPress={() => navigation.navigate(SCREENS.Difficulty)}
+        >
+          <ButtonText>play</ButtonText>
+        </ButtonContainer>
+        <ButtonContainer onPress={() => navigation.navigate(SCREENS.About)}>
+          <ButtonText>about</ButtonText>
+        </ButtonContainer>
+      </ButtonsBlock>
+      <BottomElements>
+        <Wizard />
+        <ThemeButton testID="theme-button" onPress={switchTheme}>
+          <ThemeIcon name="sun-o" />
+        </ThemeButton>
+      </BottomElements>
+    </SafeContainer>
   );
 };
