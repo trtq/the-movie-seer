@@ -21,7 +21,26 @@ The game was developed as a showcase - i wanted to make something that covered t
 - Adaptive styling with [**styled-components**](https://styled-components.com/) and [**react-native-size-matters**](https://www.npmjs.com/package/react-native-size-matters),
 - Theming, with light and dark theme switchable at any time and realized with [**styled-components**](https://styled-components.com/),
 - Persistence between sessions with [**async-storage**](https://www.npmjs.com/package/@react-native-async-storage/async-storage).
-  
+
+
+## Running locally
+
+You'll need a TMDB API read token. You can get one by creating an account at [themoviedb.org](https://www.themoviedb.org/) and generating a token in the API settings.
+
+Once you have it, create a `.env.local` file in the root of the project with the following:
+
+```
+EXPO_PUBLIC_TMDB_READ_KEY=your_token_here
+```
+
+Then install dependencies and start the app:
+
+```
+npm install
+npm start
+```
+
+
 ## Themes
 The game supports light and dark themes, realized with [**styled-components**](https://styled-components.com/). By default, the app follows the system theme, but the user has an option to change it, too.
 
