@@ -13,6 +13,7 @@ const shuffleArray = (array: unknown[]) => {
 // this generates a question - picture, id, and several answers, one of which is correct
 export const generateQuestion = async (
   difficulty: DIFFICULTY_NAME,
+  retries = 7,
 ): Promise<TQuestion> => {
   const apiUrl = process.env.EXPO_PUBLIC_TMDB_API_URL;
   const apiImageUrl = process.env.EXPO_PUBLIC_TMDB_IMAGE_URL;
@@ -79,8 +80,9 @@ export const generateQuestion = async (
       shuffleArray(result.answers);
       return result;
     } else {
-      //this happens a lot as there are occasionally movies without any "similar movies"
-      return await generateQuestion(difficulty);
+      // ~1% of movies have no similar results and require a retry; give up after 7 attempts
+      if (retries <= 0) throw "could not find a movie with sufficient similar results";
+      return await generateQuestion(difficulty, retries - 1);
     }
   } else {
     throw "no results";
