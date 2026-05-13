@@ -85,10 +85,10 @@ describe("API Calls", () => {
     ];
 
     const mockSimilarMovies = [
-      { id: 2, original_title: "Similar Movie 1" },
-      { id: 3, original_title: "Similar Movie 2" },
-      { id: 4, original_title: "Similar Movie 3" },
-      { id: 5, original_title: "Similar Movie 4" },
+      { id: 2, title: "Similar Movie 1" },
+      { id: 3, title: "Similar Movie 2" },
+      { id: 4, title: "Similar Movie 3" },
+      { id: 5, title: "Similar Movie 4" },
     ];
 
     test("generates a valid question with correct difficulty settings", async () => {
@@ -113,6 +113,8 @@ describe("API Calls", () => {
       expect(question.answers.filter((a) => !a.correct).length).toBe(
         DIFFICULTIES[DIFFICULTY_NAME.Easy].results - 1,
       );
+      const wrongAnswers = question.answers.filter((a) => !a.correct);
+      wrongAnswers.forEach((a) => expect(typeof a.name).toBe("string"));
     });
 
     test("ensures correct answer is in the answers list", async () => {
@@ -170,6 +172,46 @@ describe("API Calls", () => {
       await expect(generateQuestion(DIFFICULTY_NAME.Easy)).rejects.toEqual(
         "results are incorrect",
       );
+    });
+
+    test("retries when all movies on a page have no backdrop image", async () => {
+      const moviesWithoutBackdrop = [{ id: 10, title: "No Backdrop Movie", backdrop_path: null }];
+
+      (axios.get as jest.Mock)
+        // First call - no backdrops
+        .mockResolvedValueOnce({
+          status: 200,
+          data: { results: moviesWithoutBackdrop },
+        })
+        // Retry - valid movie
+        .mockResolvedValueOnce({
+          status: 200,
+          data: { results: mockRandomMovies },
+        })
+        .mockResolvedValueOnce({
+          status: 200,
+          data: { results: mockSimilarMovies },
+        });
+
+      const question = await generateQuestion(DIFFICULTY_NAME.Easy);
+
+      expect(question.id).toBe(mockRandomMovies[0].id);
+      expect(axios.get).toHaveBeenCalledTimes(3);
+    });
+
+    test("throws after exhausting retries when no movies have a backdrop image", async () => {
+      const moviesWithoutBackdrop = [{ id: 10, title: "No Backdrop Movie", backdrop_path: null }];
+
+      // default retries is 7, so 8 calls total should exhaust it
+      (axios.get as jest.Mock).mockResolvedValue({
+        status: 200,
+        data: { results: moviesWithoutBackdrop },
+      });
+
+      await expect(generateQuestion(DIFFICULTY_NAME.Easy)).rejects.toEqual(
+        "could not find a movie with a backdrop image",
+      );
+      expect(axios.get).toHaveBeenCalledTimes(8);
     });
 
     test("recursively calls itself when similar movies count is insufficient", async () => {

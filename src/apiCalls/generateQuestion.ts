@@ -41,6 +41,9 @@ export const generateQuestion = async (
   if (moviesResp.status !== 200 || !moviesResp.data) {
     throw "results are incorrect";
   }
+  if (moviesResp.data?.results.length === 0) {
+    throw "no results";
+  }
   // this filter guards against movies not having a backdrop image - doesn't happen in practice but is theoretically possible
   const validMovies =
     moviesResp.data?.results.filter((m: any) => m.backdrop_path) ?? [];
@@ -86,6 +89,7 @@ export const generateQuestion = async (
       return await generateQuestion(difficulty, retries - 1);
     }
   } else {
+    // all movies on this page had no backdrop - retry with a new random page
     if (retries <= 0) throw "could not find a movie with a backdrop image";
     return await generateQuestion(difficulty, retries - 1);
   }

@@ -140,6 +140,20 @@ describe("GameScreen", () => {
     });
   });
 
+  test("shows error modal when a question fails to load", async () => {
+    (generateQuestion as jest.Mock).mockReset();
+    (generateQuestion as jest.Mock).mockRejectedValue(new Error("API Error"));
+
+    const { findByText } = renderWithProviders(
+      <GameScreen
+        navigation={mockNavigation}
+        route={{ params: { difficulty: DIFFICULTY_NAME.Normal } } as any}
+      />,
+    );
+
+    expect(await findByText("Something went wrong!")).toBeTruthy();
+  });
+
   test("shows the game over modal when the game is lost", async () => {
     const { findByText, findAllByTestId, queryByTestId, findByTestId } =
       renderWithProviders(
