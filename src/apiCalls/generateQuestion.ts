@@ -41,12 +41,12 @@ export const generateQuestion = async (
   if (moviesResp.status !== 200 || !moviesResp.data) {
     throw "results are incorrect";
   }
-  if (moviesResp.data?.results.length > 0) {
-    const movie =
-      moviesResp.data.results[
-        Math.floor(Math.random() * moviesResp.data.results.length)
-      ];
-    // no that we have our movie, we get a list of similar movies to get some incorrect answers.
+  // this filter guards against movies not having a backdrop image - doesn't happen in practice but is theoretically possible
+  const validMovies =
+    moviesResp.data?.results.filter((m: any) => m.backdrop_path) ?? [];
+  if (validMovies.length > 0) {
+    const movie = validMovies[Math.floor(Math.random() * validMovies.length)];
+    // now that we have our movie, we get a list of similar movies to get some incorrect answers.
     const similarResp = await axios.get(
       `${apiUrl}/movie/${movie.id}/similar?language=en-US&page=1`,
       {
@@ -81,10 +81,12 @@ export const generateQuestion = async (
       return result;
     } else {
       // ~1% of movies have no similar results and require a retry; give up after 7 attempts
-      if (retries <= 0) throw "could not find a movie with sufficient similar results";
+      if (retries <= 0)
+        throw "could not find a movie with sufficient similar results";
       return await generateQuestion(difficulty, retries - 1);
     }
   } else {
-    throw "no results";
+    if (retries <= 0) throw "could not find a movie with a backdrop image";
+    return await generateQuestion(difficulty, retries - 1);
   }
 };
