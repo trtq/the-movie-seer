@@ -55,7 +55,7 @@ describe("API Calls", () => {
         data: { results: null },
       });
 
-      await expect(getSomeMovies()).rejects.toEqual("movies not found");
+      await expect(getSomeMovies()).rejects.toThrow("movies not found");
     });
 
     test("includes correct query parameters", async () => {
@@ -142,7 +142,7 @@ describe("API Calls", () => {
         data: { results: [] },
       });
 
-      await expect(generateQuestion(DIFFICULTY_NAME.Easy)).rejects.toEqual(
+      await expect(generateQuestion(DIFFICULTY_NAME.Easy)).rejects.toThrow(
         "no results",
       );
     });
@@ -158,7 +158,7 @@ describe("API Calls", () => {
           data: null,
         });
 
-      await expect(generateQuestion(DIFFICULTY_NAME.Easy)).rejects.toEqual(
+      await expect(generateQuestion(DIFFICULTY_NAME.Easy)).rejects.toThrow(
         "result for a similar movie search are incorrect",
       );
     });
@@ -169,7 +169,7 @@ describe("API Calls", () => {
         data: null,
       });
 
-      await expect(generateQuestion(DIFFICULTY_NAME.Easy)).rejects.toEqual(
+      await expect(generateQuestion(DIFFICULTY_NAME.Easy)).rejects.toThrow(
         "results are incorrect",
       );
     });
@@ -208,7 +208,7 @@ describe("API Calls", () => {
         data: { results: moviesWithoutBackdrop },
       });
 
-      await expect(generateQuestion(DIFFICULTY_NAME.Easy)).rejects.toEqual(
+      await expect(generateQuestion(DIFFICULTY_NAME.Easy)).rejects.toThrow(
         "could not find a movie with a backdrop image",
       );
       expect(axios.get).toHaveBeenCalledTimes(8);

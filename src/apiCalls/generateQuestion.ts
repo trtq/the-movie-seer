@@ -39,10 +39,10 @@ export const generateQuestion = async (
     },
   );
   if (moviesResp.status !== 200 || !moviesResp.data) {
-    throw "results are incorrect";
+    throw new Error("results are incorrect");
   }
   if (moviesResp.data?.results.length === 0) {
-    throw "no results";
+    throw new Error("no results");
   }
   // this filter guards against movies not having a backdrop image - doesn't happen in practice but is theoretically possible
   const validMovies =
@@ -60,7 +60,7 @@ export const generateQuestion = async (
       },
     );
     if (similarResp.status !== 200 || !similarResp.data) {
-      throw "result for a similar movie search are incorrect";
+      throw new Error("result for a similar movie search are incorrect");
     }
     if (similarResp.data?.results.length > amountOfWrongAnswers) {
       const result: TQuestion = {
@@ -85,12 +85,12 @@ export const generateQuestion = async (
     } else {
       // ~1% of movies have no similar results and require a retry; give up after 7 attempts
       if (retries <= 0)
-        throw "could not find a movie with sufficient similar results";
+        throw new Error("could not find a movie with sufficient similar results");
       return await generateQuestion(difficulty, retries - 1);
     }
   } else {
     // all movies on this page had no backdrop - retry with a new random page
-    if (retries <= 0) throw "could not find a movie with a backdrop image";
+    if (retries <= 0) throw new Error("could not find a movie with a backdrop image");
     return await generateQuestion(difficulty, retries - 1);
   }
 };

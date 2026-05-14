@@ -18,5 +18,5 @@ export const getSomeMovies = async (): Promise<TMovie[]> => {
   if (response.data?.results) {
     return response.data?.results;
   }
-  throw "movies not found";
+  throw new Error("movies not found");
 };
