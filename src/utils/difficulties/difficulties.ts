@@ -6,17 +6,20 @@ export const DIFFICULTIES: { [difficulty in DIFFICULTY_NAME]: TDifficulty } = {
     pages: 3,
     health: 4,
     results: 3,
+    minVotes: 1000,
   },
   [DIFFICULTY_NAME.Normal]: {
     years: 20,
     pages: 5,
     health: 3,
     results: 4,
+    minVotes: 600,
   },
   [DIFFICULTY_NAME.Hard]: {
     years: 25,
     pages: 7,
     health: 2,
     results: 4,
+    minVotes: 200,
   },
 };

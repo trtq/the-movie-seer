@@ -106,6 +106,9 @@ describe("API Calls", () => {
 
       expect(question.id).toBe(mockRandomMovies[0].id);
       expect(question.picture).toContain("path1.jpg");
+      expect((axios.get as jest.Mock).mock.calls[0][0]).toContain(
+        `vote_count.gte=${DIFFICULTIES[DIFFICULTY_NAME.Easy].minVotes}`,
+      );
       expect(question.answers).toHaveLength(
         DIFFICULTIES[DIFFICULTY_NAME.Easy].results,
       );
