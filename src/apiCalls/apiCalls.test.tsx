@@ -129,6 +129,10 @@ describe("API Calls", () => {
         .mockResolvedValueOnce({
           status: 200,
           data: { results: mockSimilarMovies },
+        })
+        .mockResolvedValueOnce({
+          status: 200,
+          data: { backdrops: [] },
         });
 
       const question = await generateQuestion(DIFFICULTY_NAME.Normal);
@@ -139,8 +143,8 @@ describe("API Calls", () => {
       expect(correctAnswer!.name).toBe(mockRandomMovies[0].title);
     });
 
-    test("throws error when initial movie search returns no results", async () => {
-      (axios.get as jest.Mock).mockResolvedValueOnce({
+    test("retries and throws after exhausting retries when movie search keeps returning no results", async () => {
+      (axios.get as jest.Mock).mockResolvedValue({
         status: 200,
         data: { results: [] },
       });
@@ -148,6 +152,7 @@ describe("API Calls", () => {
       await expect(generateQuestion(DIFFICULTY_NAME.Easy)).rejects.toThrow(
         "no results",
       );
+      expect(axios.get).toHaveBeenCalledTimes(8);
     });
 
     test("throws error when similar movies search is unsuccessful", async () => {
@@ -246,6 +251,72 @@ describe("API Calls", () => {
         DIFFICULTIES[DIFFICULTY_NAME.Easy].results,
       );
       expect(axios.get).toHaveBeenCalledTimes(4);
+    });
+
+    test("uses a random picture from the images call when one is available", async () => {
+      (axios.get as jest.Mock)
+        .mockResolvedValueOnce({
+          status: 200,
+          data: { results: mockRandomMovies },
+        })
+        .mockResolvedValueOnce({
+          status: 200,
+          data: { results: mockSimilarMovies },
+        })
+        .mockResolvedValueOnce({
+          status: 200,
+          data: {
+            backdrops: [
+              { file_path: "/picture1.jpg" },
+              { file_path: "/picture2.jpg" },
+            ],
+          },
+        });
+
+      const question = await generateQuestion(DIFFICULTY_NAME.Normal);
+
+      // Math.random is mocked to 0.5, so the second of the two pictures gets picked
+      expect(question.picture).toContain("picture2.jpg");
+      expect((axios.get as jest.Mock).mock.calls[2][0]).toContain(
+        "include_image_language=null",
+      );
+    });
+
+    test("falls back to the default picture when the images call fails", async () => {
+      (axios.get as jest.Mock)
+        .mockResolvedValueOnce({
+          status: 200,
+          data: { results: mockRandomMovies },
+        })
+        .mockResolvedValueOnce({
+          status: 200,
+          data: { results: mockSimilarMovies },
+        })
+        .mockRejectedValueOnce(new Error("images unavailable"));
+
+      const question = await generateQuestion(DIFFICULTY_NAME.Normal);
+
+      expect(question.picture).toContain("path1.jpg");
+    });
+
+    test("keeps the default picture on Easy without asking for the images", async () => {
+      (axios.get as jest.Mock)
+        .mockResolvedValueOnce({
+          status: 200,
+          data: { results: mockRandomMovies },
+        })
+        .mockResolvedValueOnce({
+          status: 200,
+          data: { results: mockSimilarMovies },
+        });
+
+      const question = await generateQuestion(DIFFICULTY_NAME.Easy);
+
+      expect(question.picture).toContain("path1.jpg");
+      expect(axios.get).toHaveBeenCalledTimes(2);
+      (axios.get as jest.Mock).mock.calls.forEach((call) =>
+        expect(call[0]).not.toContain("/images"),
+      );
     });
   });
 });

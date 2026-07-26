@@ -10,6 +10,7 @@ describe("difficulties", () => {
       expect(DIFFICULTIES[diff].results).toBeGreaterThanOrEqual(1);
       expect(DIFFICULTIES[diff].years).toBeGreaterThanOrEqual(1);
       expect(DIFFICULTIES[diff].minVotes).toBeGreaterThanOrEqual(1);
+      expect(typeof DIFFICULTIES[diff].harderPictures).toBe("boolean");
     }
   });
 });

@@ -20,17 +20,18 @@ export const generateQuestion = async (
   const apiKey = process.env.EXPO_PUBLIC_TMDB_READ_KEY;
 
   const date = new Date();
-  // a year of the generated question is random, the range depends on the difficulty
+  // a year of the generated question is random, the range depends on the difficulty. Current year excluded.
   const year =
     date.getFullYear() -
-    Math.round(Math.random() * DIFFICULTIES[difficulty].years);
+    1 -
+    Math.floor(Math.random() * DIFFICULTIES[difficulty].years);
   // same with the page in the list of results
-  const page = 1 + Math.round(Math.random() * DIFFICULTIES[difficulty].pages);
+  const page = 1 + Math.floor(Math.random() * DIFFICULTIES[difficulty].pages);
   // amountOfWrongAnswers - amount of incorrect results that will be generated. "- 1" - because one will be correct
   const amountOfWrongAnswers = DIFFICULTIES[difficulty].results - 1;
   // this call will get us a list of movies - how unpopular they are depends on difficulty and random chance. Will pick one movie out of the list.
   const moviesResp = await axios.get(
-    `${apiUrl}/discover/movie?include_adult=false&include_video=false&language=en-US&sort_by=vote_count.desc&page=${page}&primary_release_year=${year}&with_original_language=en`,
+    `${apiUrl}/discover/movie?include_adult=false&include_video=false&language=en-US&sort_by=vote_count.desc&page=${page}&primary_release_year=${year}&with_original_language=en&vote_count.gte=${DIFFICULTIES[difficulty].minVotes}`,
     {
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -42,7 +43,8 @@ export const generateQuestion = async (
     throw new Error("results are incorrect");
   }
   if (moviesResp.data?.results.length === 0) {
-    throw new Error("no results");
+    if (retries <= 0) throw new Error("no results");
+    return await generateQuestion(difficulty, retries - 1);
   }
   // this filter guards against movies not having a backdrop image - doesn't happen in practice but is theoretically possible
   const validMovies =
@@ -50,22 +52,45 @@ export const generateQuestion = async (
   if (validMovies.length > 0) {
     const movie = validMovies[Math.floor(Math.random() * validMovies.length)];
     // now that we have our movie, we get a list of similar movies to get some incorrect answers.
-    const similarResp = await axios.get(
-      `${apiUrl}/movie/${movie.id}/similar?language=en-US&page=1`,
-      {
+    // if difficulty has harderPictures turned on we also pull some additional images
+    const [similarResp, imagesResp] = await Promise.all([
+      axios.get(`${apiUrl}/movie/${movie.id}/similar?language=en-US&page=1`, {
         headers: {
           Authorization: `Bearer ${apiKey}`,
         },
         timeout: 10000,
-      },
-    );
+      }),
+      DIFFICULTIES[difficulty].harderPictures
+        ? axios
+            .get(
+              `${apiUrl}/movie/${movie.id}/images?include_image_language=null`,
+              {
+                headers: {
+                  Authorization: `Bearer ${apiKey}`,
+                },
+                timeout: 10000,
+              },
+            )
+            .catch(() => null)
+        : null,
+    ]);
     if (similarResp.status !== 200 || !similarResp.data) {
       throw new Error("result for a similar movie search are incorrect");
     }
+
+    let picturePath = movie.backdrop_path;
+    const additionalPictures = imagesResp?.data?.backdrops;
+    if (additionalPictures?.length > 0) {
+      picturePath =
+        additionalPictures[
+          Math.floor(Math.random() * additionalPictures.length)
+        ].file_path;
+    }
+
     if (similarResp.data?.results.length > amountOfWrongAnswers) {
       const result: TQuestion = {
         id: movie.id,
-        picture: apiImageUrl + movie.backdrop_path,
+        picture: apiImageUrl + picturePath,
         answers: [{ id: movie.id, name: movie.title, correct: true }],
       };
       let similarsCopy = [...similarResp.data.results];
