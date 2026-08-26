@@ -63,3 +63,7 @@ Thanks to [**react-native-size-matters**](https://www.npmjs.com/package/react-na
 Animations where done with [**react-native-reanimated**](https://docs.swmansion.com/react-native-reanimated/). It allows to make very pretty animations very fast. I kept the animations lightweight, but I think they look great. Also, on the menu screen, The Wizard floats around and shows you some popular movies. I like the wizard a lot.
 
 ![The wizard](https://i.imgur.com/JMLYuCj.gif "The wizard")
+
+## Try it out
+The android version is currently [available](https://play.google.com/store/apps/details?id=com.trtq.themovieseer) on Google Play
+
