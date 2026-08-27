@@ -2,7 +2,7 @@
 
 ![The Movie Seer](https://i.imgur.com/H3CsGpP.png "The Movie Seer")
 # The Movie Seer
-The Movie Seer is a game by Evgeny Ivanitsky (me) developed with React Native for mobile phones. During the game, the player is shown a promotional photo or a still from a movie along with several movie titles - one of which matches the image. If the player selects the correct title, the game moves on to the next still. If they choose incorrectly, they lose a life, and when all lives are gone, the game ends.
+The Movie Seer is a game by Eugene Ivanitsky (me) developed with React Native for mobile phones. During the game, the player is shown a promotional photo or a still from a movie along with several movie titles - one of which matches the image. If the player selects the correct title, the game moves on to the next still. If they choose incorrectly, they lose a life, and when all lives are gone, the game ends.
 
 
 The questions aren't prewritten, they are generated dynamically with the help of [The Movie Database](https://www.themoviedb.org/) and their API. 
@@ -63,3 +63,7 @@ Thanks to [**react-native-size-matters**](https://www.npmjs.com/package/react-na
 Animations where done with [**react-native-reanimated**](https://docs.swmansion.com/react-native-reanimated/). It allows to make very pretty animations very fast. I kept the animations lightweight, but I think they look great. Also, on the menu screen, The Wizard floats around and shows you some popular movies. I like the wizard a lot.
 
 ![The wizard](https://i.imgur.com/JMLYuCj.gif "The wizard")
+
+## Try it out
+The android version is currently [available](https://play.google.com/store/apps/details?id=com.trtq.themovieseer) on Google Play
+
